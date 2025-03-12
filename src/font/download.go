@@ -13,6 +13,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"time"
 
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
@@ -68,7 +69,11 @@ func isZipFile(data []byte) bool {
 }
 
 func getRemoteFile(location string) (data []byte, err error) {
-	req, err := httplib.NewRequestWithContext(context.Background(), "GET", location, nil)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	defer cancel()
+
+	req, err := httplib.NewRequestWithContext(ctx, "GET", location, nil)
 	if err != nil {
 		return nil, err
 	}
